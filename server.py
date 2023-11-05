@@ -1,6 +1,5 @@
 import json
 import socket
-import time
 from datetime import datetime
 
 class Server:
@@ -29,8 +28,8 @@ class Server:
         print(f"[NEW CONNECTION] {adrr} connected.")
         conn.sendall(f"[SERVER] You are connected to the {self.HOST}".encode("utf-8"))
     
-        connected = True
-        while connected:
+        self.connected = True
+        while self.connected:
             msg = conn.recv(1024).decode("utf-8")
             if msg == 'uptime':
                 self.uptime(conn)
@@ -39,9 +38,10 @@ class Server:
             elif msg == "help":
                 self.help_command(conn)
             elif msg == "stop":
-                connected = False
-                self.server_live = False
-        
+                self.stop(conn)#to nie zamyka clienta
+            else:
+                self.send_json("Wrong command", conn)
+     
         conn.close()
     
     def send_json(self, msg, conn):
@@ -71,5 +71,9 @@ class Server:
         }
         self.send_json(commands_info, conn)
 
-    def stop(self):
-        pass
+    def stop(self, conn):
+        print("[CLOSING] Server has been closed")
+        self.connected = False
+        self.server_live = False
+        conn.close()
+       
