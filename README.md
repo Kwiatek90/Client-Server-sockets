@@ -3,7 +3,7 @@
 ## Contents
 * [Introduction](#introduction)
 * [Setup](#setup)
-* [Screenshots](#screenshots)
+* [Video](#Video)
 * [Applied technologies and libraries](#applied-technologies-and-libraries)
 * [License](#license)
 
