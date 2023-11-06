@@ -14,8 +14,7 @@ class Client():
             self.send()
         else:
             self.client.close()
-            
-
+    
     def send(self):
         while True:
             msg = input(f"[CLIENT] Enter your message to the {self.HOST}\n")

@@ -1,7 +1,7 @@
 import json
 import socket
 from datetime import datetime
-import users
+
 class Server:
     def __init__(self, HOST, PORT, VERSION) -> None:
         self.HOST = HOST
@@ -10,7 +10,6 @@ class Server:
         self.ADDR = (self.HOST, self.PORT)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_start_time = datetime.now().replace(microsecond=0)
-        self.user_dict = {}
     
     def start_server(self):
         print("[STARTING] Server is starting ...")
@@ -20,13 +19,13 @@ class Server:
         
         self.server_live = True
         while self.server_live:
-            conn, addr = self.server.accept()
-            self.client_connection(conn, addr)
+            conn, adrr = self.server.accept()
+            self.client_connection(conn, adrr)
             
         self.server.close()
             
-    def client_connection(self, conn, addr):
-        print(f"[NEW CONNECTION] {addr} connected.")
+    def client_connection(self, conn, adrr):
+        print(f"[NEW CONNECTION] {adrr} connected.")
         conn.sendall(f"[SERVER] You are connected to the {self.HOST}".encode("utf-8"))
     
         self.connected = True
@@ -39,9 +38,7 @@ class Server:
             elif msg == "help":
                 self.help_command(conn)
             elif msg == "stop":
-                self.stop(conn)
-            elif str(msg).startswith("create user"):
-                print("User")#działa koemnda teraz
+                self.stop(conn)#to nie zamyka clienta
             else:
                 self.send_json("Wrong command", conn)
      
