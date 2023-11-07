@@ -41,7 +41,8 @@ class Server:
             elif msg == "stop":
                 self.stop(conn)
             elif str(msg).startswith("create user"):
-                print("User")#działa koemnda teraz
+                self.user_dict['User']  = users.create_user(msg)
+                #zapisywanie w json
             else:
                 self.send_json("Wrong command", conn)
      
