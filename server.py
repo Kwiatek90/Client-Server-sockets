@@ -10,12 +10,13 @@ class Server:
         self.ADDR = (self.HOST, self.PORT)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_start_time = datetime.now().replace(microsecond=0)
-        self.user_dict = {}
+        self.user_dict = users.load_users_json()
     
     def start_server(self):
         print("[STARTING] Server is starting ...")
         self.server.bind(self.ADDR)
         self.server.listen()
+        #load users
         print(f"[LISTENING] Server is listening on {self.HOST}")
         
         self.server_live = True
@@ -41,8 +42,11 @@ class Server:
             elif msg == "stop":
                 self.stop(conn)
             elif str(msg).startswith("create user"):
-                self.user_dict['User']  = users.create_user(msg)
-                #zapisywanie w json
+                response = users.create_user(msg, self.user_dict)
+                conn.sendall(f"[SERVER] {response}".encode("utf-8"))
+                self.user_dict = users.load_users_json()
+            elif str(msg).startswith("deleate user"):
+                pass
             else:
                 self.send_json("Wrong command", conn)
      
@@ -67,6 +71,7 @@ class Server:
         self.send_json(info_dict, conn)
     
     def help_command(self, conn):
+        #zrobinie komenda admina
         commands_info = {
             "uptime": "server live time",
             "info": "returns the version number of the server, its creation date",
