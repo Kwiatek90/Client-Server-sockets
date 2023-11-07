@@ -10,9 +10,5 @@
    "Testowy": {
       "password": "1234",
       "admin": true
-   },
-   "Hej": {
-      "password": "1234",
-      "admin": true
    }
 }

@@ -41,12 +41,17 @@ class Server:
                 self.help_command(conn)
             elif msg == "stop":
                 self.stop(conn)
+            #zrobic logowanies
             elif str(msg).startswith("create user"):
                 response = users.create_user(msg, self.user_dict)
                 conn.sendall(f"[SERVER] {response}".encode("utf-8"))
                 self.user_dict = users.load_users_json()
-            elif str(msg).startswith("deleate user"):
-                pass
+            elif str(msg).startswith("delete user"):
+                response = users.delete_user(msg, self.user_dict)
+                conn.sendall(f"[SERVER] {response}".encode("utf-8"))
+                self.user_dict = users.load_users_json()
+            elif str(msg).startswith("show users"):
+                self.send_json(self.user_dict, conn)
             else:
                 self.send_json("Wrong command", conn)
      
