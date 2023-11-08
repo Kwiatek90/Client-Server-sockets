@@ -2,6 +2,7 @@ import json
 import socket
 from datetime import datetime
 import users
+import messages
 class Server:
     def __init__(self, HOST, PORT, VERSION) -> None:
         self.HOST = HOST
@@ -12,13 +13,13 @@ class Server:
         self.server_start_time = datetime.now().replace(microsecond=0)
         self.user_dict = users.load_users_json()
         self.is_admin = False
-        self.users_logged = ""
+        self.user_logged = ""
     
     def start_server(self):
         print("[STARTING] Server is starting ...")
         self.server.bind(self.ADDR)
         self.server.listen()
-        #load users
+      
         print(f"[LISTENING] Server is listening on {self.HOST}")
         
         self.server_live = True
@@ -44,25 +45,22 @@ class Server:
                 self.help_command(conn)
             elif msg == "stop":
                 self.stop(conn)
-            elif str(msg).startswith("create user"):
+            elif str(msg).startswith("user create") and self.is_admin == True:
                 response = users.create_user(msg, self.user_dict)
-                conn.sendall(f"[SERVER] {response}".encode("utf-8"))
-                self.user_dict = users.load_users_json()#zrobic funkcje 1
-            elif str(msg).startswith("delete user"):
+                self.response_load_users(response, conn)
+            elif str(msg).startswith("user delete") and self.is_admin == True:
                 response = users.delete_user(msg, self.user_dict)
-                conn.sendall(f"[SERVER] {response}".encode("utf-8"))
-                self.user_dict = users.load_users_json()#zrobic funkcje 1
-            elif str(msg).startswith("show users"):
-                self.send_json(self.user_dict, conn)#zmienic zeby poakzywaly sie imiona
-            elif str(msg).startswith("log in user"):
-                if not self.users_logged:
-                    response, self.users_logged, self.is_admin = users.user_log_in(msg, self.user_dict)
-                    conn.sendall(f"[SERVER] {response}".encode("utf-8"))
-                else:
-                    pass
-                    #jestes zalgowany!
+                self.response_load_users(response, conn)
+            elif str(msg).startswith("users show") and self.is_admin == True:
+                users_list = users.users_show(self.user_dict)
+                msg_json = json.dumps(users_list, indent=2)
+                conn.sendall(f"[SERVER] Users on server {msg_json}".encode("utf-8"))  
+            elif str(msg).startswith("user log in"):
+                self.user_logged, self.is_admin = users.user_log_in(conn , msg, self.user_dict, self.user_logged, self.is_admin)
+            elif msg == "user log out":
+                self.user_logged, self.is_admin = users.user_log_out(conn, self.user_logged, self.is_admin)
             elif str(msg).startswith("user info"):
-                response = users.user_info(self.users_logged)
+                response = users.user_info(self.user_logged)
                 conn.sendall(f"[SERVER] {response}".encode("utf-8"))    
             elif str(msg).startswith("messages read"):
                 #wyświeltania wiadomości od uztkowników
@@ -71,15 +69,19 @@ class Server:
                 #wyswietla wiadomosci od konkretnych uztkownkow
                 pass
             elif str(msg).startswith("message new"):
-                #wysyła wiadomosć
+                resposne = messages.message_new(msg, self.user_logged)
                 pass
             elif str(msg).startswith("message delete"):
                 #usuwa wiadomosc
                 pass
             else:
-                self.send_json("Wrong command", conn)
+                conn.sendall(f"[SERVER] You entered the wrong command or you don't have access to it".encode("utf-8"))
      
         conn.close()
+        
+    def response_load_users(self, response, conn):
+        conn.sendall(f"[SERVER] {response}".encode("utf-8"))
+        self.user_dict = users.load_users_json()
     
     def send_json(self, msg, conn):
         msg_json = json.dumps(msg, indent=2)
@@ -99,14 +101,40 @@ class Server:
         info_dict = { "Version of the server":self.VERSION, "Creation date": self.server_start_time.strftime('%a %d %b %Y, %I:%M%p')} 
         self.send_json(info_dict, conn)
     
-    def help_command(self, conn):
-        #zrobinie komenda admina
-        commands_info = {
-            "uptime": "server live time",
-            "info": "returns the version number of the server, its creation date",
-            "help": "returns a list of available commands with a short description",
-            "stop": "stops the server and client at the same time"
-        }
+    def help_command(self, conn):############zrobic pobieranie z jsona
+        if not self.user_logged:
+            commands_info = {
+                "uptime": "server live time",
+                "info": "returns the version number of the server, its creation date",
+                "help": "returns a list of available commands with a short description",
+                "stop": "stops the server and client at the same time",
+                "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password"
+            }
+        elif self.is_admin == False:
+            commands_info ={
+                "uptime": "server live time",
+                "info": "returns the version number of the server, its creation date",
+                "help": "returns a list of available commands with a short description",
+                "stop": "stops the server and client at the same time",
+                "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password",
+                "user info": "Shows who is currently logged in",
+                "user log out": "Logs the user out"
+                #messsage
+                }
+        elif self.is_admin == True:
+            commands_info = {
+                "uptime": "server live time",
+                "info": "returns the version number of the server, its creation date",
+                "help": "returns a list of available commands with a short description",
+                "stop": "stops the server and client at the same time",
+                "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password",
+                "user info": "Shows who is currently logged in",
+                "user log out": "Logs the user out",
+                "user create [NAME] [PASSWORD] [IS_ADMIN(Yes/No)]": "Creating a user",
+                "user delete [NAME]": "Deleting a user",
+                "users show": "Shows all server users"
+            }
+        
         self.send_json(commands_info, conn)
 
     def stop(self, conn):

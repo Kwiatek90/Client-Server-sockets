@@ -1,14 +1,10 @@
 {
-   "Test": {
-      "password": "12324",
-      "admin": true
-   },
-   "Tesst": {
-      "password": "12324",
-      "admin": true
-   },
    "Testowy": {
       "password": "1234",
       "admin": true
+   },
+   "TestUser": {
+      "password": "1234",
+      "admin": false
    }
 }
