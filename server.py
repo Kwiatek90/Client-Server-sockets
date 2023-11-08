@@ -11,6 +11,8 @@ class Server:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_start_time = datetime.now().replace(microsecond=0)
         self.user_dict = users.load_users_json()
+        self.is_admin = False
+        self.users_logged = ""
     
     def start_server(self):
         print("[STARTING] Server is starting ...")
@@ -29,7 +31,8 @@ class Server:
     def client_connection(self, conn, addr):
         print(f"[NEW CONNECTION] {addr} connected.")
         conn.sendall(f"[SERVER] You are connected to the {self.HOST}".encode("utf-8"))
-    
+
+        
         self.connected = True
         while self.connected:
             msg = conn.recv(1024).decode("utf-8")
@@ -41,17 +44,38 @@ class Server:
                 self.help_command(conn)
             elif msg == "stop":
                 self.stop(conn)
-            #zrobic logowanies
             elif str(msg).startswith("create user"):
                 response = users.create_user(msg, self.user_dict)
                 conn.sendall(f"[SERVER] {response}".encode("utf-8"))
-                self.user_dict = users.load_users_json()
+                self.user_dict = users.load_users_json()#zrobic funkcje 1
             elif str(msg).startswith("delete user"):
                 response = users.delete_user(msg, self.user_dict)
                 conn.sendall(f"[SERVER] {response}".encode("utf-8"))
-                self.user_dict = users.load_users_json()
+                self.user_dict = users.load_users_json()#zrobic funkcje 1
             elif str(msg).startswith("show users"):
-                self.send_json(self.user_dict, conn)
+                self.send_json(self.user_dict, conn)#zmienic zeby poakzywaly sie imiona
+            elif str(msg).startswith("log in user"):
+                if not self.users_logged:
+                    response, self.users_logged, self.is_admin = users.user_log_in(msg, self.user_dict)
+                    conn.sendall(f"[SERVER] {response}".encode("utf-8"))
+                else:
+                    pass
+                    #jestes zalgowany!
+            elif str(msg).startswith("user info"):
+                response = users.user_info(self.users_logged)
+                conn.sendall(f"[SERVER] {response}".encode("utf-8"))    
+            elif str(msg).startswith("messages read"):
+                #wyświeltania wiadomości od uztkowników
+                pass
+            elif str(msg).startswith("message read from"):
+                #wyswietla wiadomosci od konkretnych uztkownkow
+                pass
+            elif str(msg).startswith("message new"):
+                #wysyła wiadomosć
+                pass
+            elif str(msg).startswith("message delete"):
+                #usuwa wiadomosc
+                pass
             else:
                 self.send_json("Wrong command", conn)
      

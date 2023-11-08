@@ -1,7 +1,7 @@
 import json
 
 def create_user(msg, user_dict):
-    create_str, user_str, name, password, admin = str(msg).split(" ")
+    create_str, user_str, name, password, admin = str(msg).split(" ")#############################zrobic try jak bedzie zla ilosc komenda podaba
     
     if admin == "Yes" or admin == "yes":
         admin = True
@@ -29,7 +29,22 @@ def delete_user(msg, user_dict):
         
     return response
 
+def user_log_in(msg, user_dict):
+    user, log, inn, name, password = str(msg).split(" ")
     
+    if name in user_dict and user_dict[name]['password'] == password:
+            response, name, is_admin = "Użytkownik został zalogowany!", name, user_dict[name]['admin']
+    else:
+        response = "Dane logowania są nieprawidłowe"
+        name = ""
+        is_admin = False
+        
+    return response, name, is_admin
+
+def user_info(user_logged):
+    respone = f"Jesteś zalogowany jako {user_logged}"
+    
+    return respone
 
 def save_users_json(users_dict):
     with open('users.json', 'w') as file:
