@@ -69,8 +69,7 @@ class Server:
                 #wyswietla wiadomosci od konkretnych uztkownkow
                 pass
             elif str(msg).startswith("message new"):
-                resposne = messages.message_new(msg, self.user_logged)
-                pass
+                messages.message_new(conn, msg, self.user_dict, self.user_logged)
             elif str(msg).startswith("message delete"):
                 #usuwa wiadomosc
                 pass
