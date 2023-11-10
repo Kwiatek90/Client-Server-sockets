@@ -61,17 +61,16 @@ class Server:
                 self.user_logged, self.is_admin = users.user_log_out(conn, self.user_logged, self.is_admin)
             elif str(msg).startswith("user info"):
                 response = users.user_info(self.user_logged)
-                conn.sendall(f"[SERVER] {response}".encode("utf-8"))    
-            elif str(msg).startswith("messages read"):
-                #wyświeltania wiadomości od uztkowników
+                conn.sendall(f"[SERVER] {response}".encode("utf-8"))
+            elif str(msg).startswith("message new"):
+                messages.message_new(conn, msg, self.user_dict, self.user_logged)    
+            elif str(msg).startswith("message delete"):
                 pass
+                #usuwa wiadomosc
+            elif str(msg).startswith("messages read"):
+                messages.message_read(conn, self.user_logged)
             elif str(msg).startswith("message read from"):
                 #wyswietla wiadomosci od konkretnych uztkownkow
-                pass
-            elif str(msg).startswith("message new"):
-                messages.message_new(conn, msg, self.user_dict, self.user_logged)
-            elif str(msg).startswith("message delete"):
-                #usuwa wiadomosc
                 pass
             else:
                 conn.sendall(f"[SERVER] You entered the wrong command or you don't have access to it".encode("utf-8"))
@@ -131,7 +130,8 @@ class Server:
                 "user log out": "Logs the user out",
                 "user create [NAME] [PASSWORD] [IS_ADMIN(Yes/No)]": "Creating a user",
                 "user delete [NAME]": "Deleting a user",
-                "users show": "Shows all server users"
+                "users show": "Shows all server users",
+                "message new [NAME] > [MESSAGE]": "Will send a message to the user with a maximum capacity of 255 characters",
             }
         
         self.send_json(commands_info, conn)
