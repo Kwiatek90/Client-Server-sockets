@@ -74,7 +74,7 @@ def user_log_in(conn , msg, user_dict, user_logged , is_admin):
 
 def user_log_out(conn, user_logged, is_admin):
     if user_logged:
-        user_logged = ""
+        user_logged = None
         is_admin = False
         conn.sendall(f"[SERVER] The user has been logged out".encode("utf-8")) 
     else:
@@ -82,7 +82,10 @@ def user_log_out(conn, user_logged, is_admin):
     return user_logged, is_admin
 
 def user_info(user_logged):
-    respone = f"You are logged in as {user_logged}"
+    if not user_logged:
+        respone = "You need to log in!"
+    else:
+        respone = f"You are logged in as {user_logged}"
     return respone
 
 def save_users_json(users_dict):

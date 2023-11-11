@@ -13,7 +13,7 @@ class Server:
         self.server_start_time = datetime.now().replace(microsecond=0)
         self.user_dict = users.load_users_json()
         self.is_admin = False
-        self.user_logged = ""
+        self.user_logged = None
     
     def start_server(self):
         print("[STARTING] Server is starting ...")
@@ -65,13 +65,11 @@ class Server:
             elif str(msg).startswith("message new"):
                 messages.message_new(conn, msg, self.user_dict, self.user_logged)    
             elif str(msg).startswith("message delete"):
-                pass
-                #usuwa wiadomosc
+                messages.message_delete(conn, msg, self.user_logged)
             elif str(msg).startswith("messages read"):
                 messages.message_read(conn, self.user_logged)
             elif str(msg).startswith("message read from"):
-                #wyswietla wiadomosci od konkretnych uztkownkow
-                pass
+                messages.message_read_from(conn, msg, self.user_logged)
             else:
                 conn.sendall(f"[SERVER] You entered the wrong command or you don't have access to it".encode("utf-8"))
      
@@ -99,7 +97,7 @@ class Server:
         info_dict = { "Version of the server":self.VERSION, "Creation date": self.server_start_time.strftime('%a %d %b %Y, %I:%M%p')} 
         self.send_json(info_dict, conn)
     
-    def help_command(self, conn):############zrobic pobieranie z jsona
+    def help_command(self, conn):##############zrpbic komendy
         if not self.user_logged:
             commands_info = {
                 "uptime": "server live time",
