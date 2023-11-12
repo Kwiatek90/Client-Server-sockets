@@ -31,7 +31,7 @@ This Python script demonstrates a simple client-server communication setup using
 
 ## Video
 
-https://youtu.be/RJk5bsuxXx4
+https://youtu.be/tgf30V91FGI
 
 ## Version History
 
