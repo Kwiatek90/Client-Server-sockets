@@ -5,11 +5,12 @@
 * [Setup](#setup)
 * [Video](#Video)
 * [Applied technologies and libraries](#applied-technologies-and-libraries)
+* [Version History](#version-history)
 * [License](#license)
 
 ## Introduction
 
-This Python script demonstrates a simple client-server communication setup using sockets. The server and client can exchange messages using JSON, and the server offers some basic functionalities such as providing server uptime, server information, and a list of available commands
+This Python script demonstrates a simple client-server communication setup using sockets. The server provides essential functionalities, including server uptime, server information retrieval, a list of available commands, and user management. Users can have either admin or user rights, and the server allows sending and managing messages between clients. All data is stored in json files
 
 ## Setup
 
@@ -32,6 +33,25 @@ This Python script demonstrates a simple client-server communication setup using
 
 https://youtu.be/RJk5bsuxXx4
 
+## Version History
+
+### v0.1.0
+* Initial release of the client-server socket application.
+* Added server uptime, info, help, stop functionality.
+
+### v0.1.5
+* User management: creating and deleting users.
+* User login and logout functionality.
+
+### v0.2.0
+* Enhanced messaging system:
+    * Users can send messages to each other.
+    * Users can delete their messages.
+    * Users can view all messages and mark them as read.
+    * Users can view a specific message and mark it as read.
+
+* Improved error handling for user and messages commands
+
 ## Applied technologies and libraries
 
 * Environment
@@ -41,7 +61,7 @@ https://youtu.be/RJk5bsuxXx4
 * Libraries
     * socket
     * json
-    * dateitme
+    * datetime
 
 ## License
 

@@ -66,7 +66,7 @@ class Server:
                 messages.message_new(conn, msg, self.user_dict, self.user_logged)    
             elif str(msg).startswith("message delete"):
                 messages.message_delete(conn, msg, self.user_logged)
-            elif str(msg).startswith("messages read"):
+            elif msg == "messages read":
                 messages.message_read(conn, self.user_logged)
             elif str(msg).startswith("message read from"):
                 messages.message_read_from(conn, msg, self.user_logged)
@@ -91,47 +91,32 @@ class Server:
         date_dict["Minuts"] = diff_time[1]
         date_dict["Seconds"] = diff_time[2]
         time = {"Live of server": date_dict}
+        print("[SENDING] Live of server")
         self.send_json(time, conn)
     
     def info(self,conn):
         info_dict = { "Version of the server":self.VERSION, "Creation date": self.server_start_time.strftime('%a %d %b %Y, %I:%M%p')} 
+        print("[SENDING] Info about server")
         self.send_json(info_dict, conn)
     
-    def help_command(self, conn):##############zrpbic komendy
-        if not self.user_logged:
-            commands_info = {
-                "uptime": "server live time",
-                "info": "returns the version number of the server, its creation date",
-                "help": "returns a list of available commands with a short description",
-                "stop": "stops the server and client at the same time",
-                "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password"
-            }
-        elif self.is_admin == False:
-            commands_info ={
-                "uptime": "server live time",
-                "info": "returns the version number of the server, its creation date",
-                "help": "returns a list of available commands with a short description",
-                "stop": "stops the server and client at the same time",
-                "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password",
-                "user info": "Shows who is currently logged in",
-                "user log out": "Logs the user out"
-                #messsage
-                }
-        elif self.is_admin == True:
-            commands_info = {
-                "uptime": "server live time",
-                "info": "returns the version number of the server, its creation date",
-                "help": "returns a list of available commands with a short description",
-                "stop": "stops the server and client at the same time",
-                "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password",
-                "user info": "Shows who is currently logged in",
-                "user log out": "Logs the user out",
-                "user create [NAME] [PASSWORD] [IS_ADMIN(Yes/No)]": "Creating a user",
-                "user delete [NAME]": "Deleting a user",
-                "users show": "Shows all server users",
-                "message new [NAME] > [MESSAGE]": "Will send a message to the user with a maximum capacity of 255 characters",
-            }
-        
+    def help_command(self, conn):
+        commands_info = {
+            "uptime": "server live time",
+            "info": "returns the version number of the server, its creation date",
+            "help": "returns a list of available commands with a short description",
+            "stop": "stops the server and client at the same time",
+            "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password",
+            "user info": "Shows who is currently logged in",
+            "user log out": "Logs the user out",
+            "user create [NAME] [PASSWORD] [IS_ADMIN(Yes/No)]": "Creating a user",
+            "user delete [NAME]": "Deleting a user",
+            "users show": "Shows all server users",
+            "message new [NAME] > [MESSAGE]": "Will send a message to the user with a maximum capacity of 255 characters",
+            "message delete [MESSAGE NUMBER STARTING FROM 0]": "Deleting a message",
+            "messages read": "Shows all messages, who they are from and whether they have been read",
+            "message read from [MESSAGE NUMBER STARTING FROM 0]": "Show message from the sender"
+        }
+        print("[SENDING] Help command")
         self.send_json(commands_info, conn)
 
     def stop(self, conn):

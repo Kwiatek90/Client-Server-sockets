@@ -42,18 +42,15 @@ def message_delete(conn, msg, user_logged):
         conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
 
 def message_read(conn, user_logged):
-    try:
-        user_msg_json = load_message_user_json(user_logged)
-        
-        messages = []
-        for message in user_msg_json:
-            messages.append({"Message from:": message['Message from'], "Read": message["Read"]})
-        
-        messages_read_json = json.dumps(messages, indent=2)
-        conn.sendall(f"[SERVER] You have messages from:\n{messages_read_json}".encode("utf-8")) 
-    except ValueError:
-        response = "The wrong amount of data was entered or the format was incorrect"
-        conn.sendall(f"[SERVER] {response}".encode("utf-8"))   
+    user_msg_json = load_message_user_json(user_logged)
+    
+    messages = []
+    for message in user_msg_json:
+        messages.append({"Message from:": message['Message from'], "Read": message["Read"]})
+    
+    messages_read_json = json.dumps(messages, indent=2)
+    conn.sendall(f"[SERVER] You have messages from:\n{messages_read_json}".encode("utf-8")) 
+      
                
 def message_read_from(conn, msg, user_logged):
     try:
@@ -78,6 +75,7 @@ def load_message_user_json(user):
             return users_json   
         
     except FileNotFoundError:
+        print("[FILES] File not exist, creating one")
         user_msg_json = []
         save_message_user_json(user, user_msg_json)
         users_json = load_message_user_json(user)
