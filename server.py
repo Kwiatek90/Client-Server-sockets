@@ -14,6 +14,7 @@ class Server:
         self.user_dict = users.load_users_json()
         self.is_admin = False
         self.user_logged = None
+        #stweorzyc gdzie maja sie zapisywac dane!!!!!!!!!!!
     
     def start_server(self):
         print("[STARTING] Server is starting ...")
@@ -54,7 +55,7 @@ class Server:
             elif str(msg).startswith("users show") and self.is_admin == True:
                 users_list = users.users_show(self.user_dict)
                 msg_json = json.dumps(users_list, indent=2)
-                conn.sendall(f"[SERVER] Users on server {msg_json}".encode("utf-8"))  
+                conn.sendall(f"[SERVER] Users on server\n{msg_json}".encode("utf-8"))  
             elif str(msg).startswith("user log in"):
                 self.user_logged, self.is_admin = users.user_log_in(conn , msg, self.user_dict, self.user_logged, self.is_admin)
             elif msg == "user log out":
