@@ -1,6 +1,6 @@
 import json
 
-def create_user(msg, user_dict):
+def create_user(msg, user_dict, users_json_path):
     try:
         user_str, create_str,  name, password, admin = str(msg).split(" ")
         
@@ -16,7 +16,7 @@ def create_user(msg, user_dict):
             response = "The user exists"
         else:   
             user_dict[name] = {'password': password, 'admin': admin}
-            save_users_json(user_dict)
+            save_users_json(user_dict, users_json_path)
             response = "The user has been added!"
         return response
     except ValueError:
@@ -24,13 +24,13 @@ def create_user(msg, user_dict):
         response = "The wrong amount of data was entered or the format was incorrect"
         return response
     
-def delete_user(msg, user_dict):
+def delete_user(msg, user_dict, users_json_path):
     try:
         user, delete,  name = str(msg) .split(" ")
         
         if name in user_dict:
             user_dict.pop(name)
-            save_users_json(user_dict)
+            save_users_json(user_dict, users_json_path)
             response = "The user has been deleted"
             print(f"[DELETE] The {name} has been delted")
         else:
@@ -93,12 +93,12 @@ def user_info(user_logged):
         respone = f"You are logged in as {user_logged}"
     return respone
 
-def save_users_json(users_dict):
-    with open(r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json', 'w') as file:
+def save_users_json(users_dict, users_json_path):
+    with open(users_json_path, 'w') as file:
         json.dump(users_dict, file, indent=3)
         
-def load_users_json():
-    with open(r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json', 'r') as file:
+def load_users_json(users_json_path):
+    with open(users_json_path, 'r') as file:
         users_json = json.load(file)
     return users_json
 

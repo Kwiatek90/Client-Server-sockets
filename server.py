@@ -14,7 +14,8 @@ class Server:
         self.user_dict = users.load_users_json()
         self.is_admin = False
         self.user_logged = None
-        #stweorzyc gdzie maja sie zapisywac dane!!!!!!!!!!!
+        self.users_json_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json'
+        
     
     def start_server(self):
         print("[STARTING] Server is starting ...")
@@ -47,10 +48,10 @@ class Server:
             elif msg == "stop":
                 self.stop(conn)
             elif str(msg).startswith("user create") and self.is_admin == True:
-                response = users.create_user(msg, self.user_dict)
+                response = users.create_user(msg, self.user_dict, self.users_json_path)
                 self.response_load_users(response, conn)
             elif str(msg).startswith("user delete") and self.is_admin == True:
-                response = users.delete_user(msg, self.user_dict)
+                response = users.delete_user(msg, self.user_dict, self.users_json_path)
                 self.response_load_users(response, conn)
             elif str(msg).startswith("users show") and self.is_admin == True:
                 users_list = users.users_show(self.user_dict)
@@ -78,7 +79,7 @@ class Server:
         
     def response_load_users(self, response, conn):
         conn.sendall(f"[SERVER] {response}".encode("utf-8"))
-        self.user_dict = users.load_users_json()
+        self.user_dict = users.load_users_json(self.users_json_path)
     
     def send_json(self, msg, conn):
         msg_json = json.dumps(msg, indent=2)

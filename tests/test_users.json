@@ -1,0 +1,6 @@
+{
+   "TestingUserNoAdmin": {
+      "password": "asd123qwe",
+      "admin": false
+   }
+}
