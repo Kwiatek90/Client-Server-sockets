@@ -5,7 +5,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from server import Server
 
-class UsersTests(unittest.TestCase):
+class ServerTests(unittest.TestCase):
     def test(self):
         server = Server()
         

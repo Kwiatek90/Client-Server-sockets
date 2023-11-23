@@ -11,10 +11,10 @@ class Server:
         self.ADDR = (self.HOST, self.PORT)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_start_time = datetime.now().replace(microsecond=0)
-        self.user_dict = users.load_users_json()
         self.is_admin = False
         self.user_logged = None
         self.users_json_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json'
+        self.user_dict = users.load_users_json(self.users_json_path)
         
     
     def start_server(self):

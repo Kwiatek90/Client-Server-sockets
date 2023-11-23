@@ -6,7 +6,7 @@ def create_user(msg, user_dict, users_json_path):
         
         if admin == "Yes" or admin == "yes":
             admin = True
-        elif admin == "No" or "no": 
+        elif admin == "No" or admin == "no": 
             admin = False
         else:
             response = "Incorrect value for admin rights"

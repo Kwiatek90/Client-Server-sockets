@@ -1,6 +1,14 @@
 {
-   "TestingUserNoAdmin": {
-      "password": "asd123qwe",
+   "FirstUser": {
+      "password": "123",
+      "admin": false
+   },
+   "SecondUser": {
+      "password": "123",
+      "admin": true
+   },
+   "ThirdUser": {
+      "password": "123",
       "admin": false
    }
 }
