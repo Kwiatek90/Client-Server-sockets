@@ -47,7 +47,7 @@ class Server:
                 self.help_command(conn)
             elif msg == "stop":
                 self.stop(conn)
-            elif str(msg).startswith("user create") and self.is_admin == True:
+            elif str(msg).startswith("user create") and self.is_admin == True:#wrzucic sprawdzanie admina do funkcji
                 response = users.create_user(msg, self.user_dict, self.users_json_path)
                 self.response_load_users(response, conn)
             elif str(msg).startswith("user delete") and self.is_admin == True:
@@ -58,7 +58,8 @@ class Server:
                 msg_json = json.dumps(users_list, indent=2)
                 conn.sendall(f"[SERVER] Users on server\n{msg_json}".encode("utf-8"))  
             elif str(msg).startswith("user log in"):
-                self.user_logged, self.is_admin = users.user_log_in(conn , msg, self.user_dict, self.user_logged, self.is_admin)
+                self.user_logged, self.is_admin, response = users.user_log_in(msg, self.user_dict, self.user_logged, self.is_admin)
+                conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
             elif msg == "user log out":
                 self.user_logged, self.is_admin = users.user_log_out(conn, self.user_logged, self.is_admin)
             elif str(msg).startswith("user info"):

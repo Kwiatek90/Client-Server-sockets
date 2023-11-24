@@ -32,7 +32,7 @@ def delete_user(msg, user_dict, users_json_path):
             user_dict.pop(name)
             save_users_json(user_dict, users_json_path)
             response = "The user has been deleted"
-            print(f"[DELETE] The {name} has been delted")
+            print(f"[DELETE] The {name} has been deleted")
         else:
             response = "User does not exist!"
             
@@ -48,7 +48,7 @@ def users_show(user_dict):
         users.append(user)
     return users
         
-def user_log_in(conn , msg, user_dict, user_logged , is_admin):
+def user_log_in(msg, user_dict, user_logged , is_admin):
     try:
         if not user_logged:
             user, log, inn, name, password = str(msg).split(" ")
@@ -60,22 +60,17 @@ def user_log_in(conn , msg, user_dict, user_logged , is_admin):
                 print("[FAIL] The client provided wrong data")
                 user_logged = ""
                 is_admin = False
-            
-            conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
-            return user_logged, is_admin
         else:
             response = user_info(user_logged)
-            conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
         
-            return user_logged, is_admin
+        return user_logged, is_admin, response
     except ValueError:
         print("[FAIL] Wrong data")
         response = "The wrong amount of data was entered or the format was incorrect"
         user_logged = ""
-        is_admin = False
-        conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
+        is_admin = False 
         
-        return user_logged, is_admin
+        return user_logged, is_admin, response
 
 def user_log_out(conn, user_logged, is_admin):
     if user_logged:
