@@ -54,12 +54,11 @@ def user_log_in(msg, user_dict, user_logged , is_admin):
             user, log, inn, name, password = str(msg).split(" ")
             
             if name in user_dict and user_dict[name]['password'] == password:
-                    response, user_logged, is_admin = "The user has been logged in!", name, user_dict[name]['admin']
+                response, user_logged, is_admin = "The user has been logged in!", name, user_dict[name]['admin']
             else:
                 response = "The login details are incorrect"
                 print("[FAIL] The client provided wrong data")
-                user_logged = ""
-                is_admin = False
+                
         else:
             response = user_info(user_logged)
         
@@ -67,19 +66,18 @@ def user_log_in(msg, user_dict, user_logged , is_admin):
     except ValueError:
         print("[FAIL] Wrong data")
         response = "The wrong amount of data was entered or the format was incorrect"
-        user_logged = ""
-        is_admin = False 
         
         return user_logged, is_admin, response
 
-def user_log_out(conn, user_logged, is_admin):
+def user_log_out(user_logged):
+    is_admin = False
+    
     if user_logged:
         user_logged = None
-        is_admin = False
-        conn.sendall(f"[SERVER] The user has been logged out".encode("utf-8")) 
+        response = "[SERVER] The user has been logged out"
     else:
-        conn.sendall(f"[SERVER] No one is currently logged in".encode("utf-8")) 
-    return user_logged, is_admin
+        response = "[SERVER] No one is currently logged in"
+    return user_logged, is_admin, response
 
 def user_info(user_logged):
     if not user_logged:

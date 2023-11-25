@@ -14,6 +14,7 @@ class Server:
         self.is_admin = False
         self.user_logged = None
         self.users_json_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json'
+        self.messages_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\messages'
         self.user_dict = users.load_users_json(self.users_json_path)
         
     
@@ -61,12 +62,14 @@ class Server:
                 self.user_logged, self.is_admin, response = users.user_log_in(msg, self.user_dict, self.user_logged, self.is_admin)
                 conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
             elif msg == "user log out":
-                self.user_logged, self.is_admin = users.user_log_out(conn, self.user_logged, self.is_admin)
-            elif str(msg).startswith("user info"):
+                self.user_logged, self.is_admin, response = users.user_log_out(self.user_logged)
+                conn.sendall(f"{response}".encode("utf-8")) 
+            elif msg =="user info":
                 response = users.user_info(self.user_logged)
                 conn.sendall(f"[SERVER] {response}".encode("utf-8"))
             elif str(msg).startswith("message new"):
-                messages.message_new(conn, msg, self.user_dict, self.user_logged)    
+                response = messages.message_new(msg, self.user_dict, self.user_logged, self.messages_path)  
+                conn.sendall(f"[SERVER] {response}".encode("utf-8"))    
             elif str(msg).startswith("message delete"):
                 messages.message_delete(conn, msg, self.user_logged)
             elif msg == "messages read":

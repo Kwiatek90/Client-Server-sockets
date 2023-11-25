@@ -14,15 +14,15 @@ class UsersTests(unittest.TestCase):
         self.delete_user_msg = "delete user TestUser"
         self.user_dict_to_check = {
                                         "FirstUser": {
-                                            "password": 123,
+                                            "password": "123",
                                             "admin": False
                                         },
                                         "SecondUser": {
-                                            "password": 123,
+                                            "password": "123",
                                             "admin": True
                                         },
                                         "ThirdUser": {
-                                            "password": 123,
+                                            "password": "123",
                                             "admin": False
                                         }
                                     }
@@ -70,8 +70,34 @@ class UsersTests(unittest.TestCase):
         self.assertEqual(users.delete_user(testMsg, self.user_dict_empty, self.users_json_path), "The wrong amount of data was entered or the format was incorrect")
 
     def test_user_log_in_check_the_user_is_logged(self):
-        ###przeniesc conny do servera
+        testMsg = "user log in FirstUser 123"
+        self.assertEqual(users.user_log_in(testMsg, self.user_dict_to_check, None, False), ("FirstUser", False , "The user has been logged in!"))
    
+    def test_user_log_in_with_incorrect_data(self):
+        testMsg = "user log in FirstUser 123incorrect"
+        self.assertEqual(users.user_log_in(testMsg, self.user_dict_to_check, None, False), (None , False , "The login details are incorrect"))
+   
+    def test_user_log_in_with_too_much_data_in_messages(self):
+        testMsg = "user log in FirstUser 123 Admin"
+        self.assertEqual(users.user_log_in(testMsg, self.user_dict_to_check, None, False), (None , False , "The wrong amount of data was entered or the format was incorrect"))
+
+    def test_user_log_out(self):
+        self.assertEqual(users.user_log_out("FirstUser"), (None, False, "[SERVER] The user has been logged out"))
+        
+    def test_user_log_out_if_no_one_is_log_in(self):
+        self.assertEqual(users.user_log_out(None), (None, False, "[SERVER] No one is currently logged in"))
+        
+    def test_user_info(self):
+        user_logged = "FirstUser"
+        self.assertEqual(users.user_info(user_logged), f"You are logged in as {user_logged}" )
+        
+    def test_user_info_if_no_one_is_log_in(self):
+        self.assertEqual(users.user_info(None), "You need to log in!")
+        
+    def test_save_load_user_json(self):
+        users.save_users_json(self.user_dict_to_check, self.users_json_path)
+        self.assertEqual(self.user_dict_to_check, users.load_users_json(self.users_json_path))
+        
 if __name__ == "__main__":
     unittest.main()
         
