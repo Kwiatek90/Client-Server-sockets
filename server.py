@@ -71,9 +71,11 @@ class Server:
                 response = messages.message_new(msg, self.user_dict, self.user_logged, self.messages_path)  
                 conn.sendall(f"[SERVER] {response}".encode("utf-8"))    
             elif str(msg).startswith("message delete"):
-                messages.message_delete(conn, msg, self.user_logged)
+                response = messages.message_delete(msg, self.user_logged, self.messages_path)
+                conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
             elif msg == "messages read":
-                messages.message_read(conn, self.user_logged)
+                response = messages.message_read(self.user_logged, self.messages_path)
+                conn.sendall(f"[SERVER] You have messages from:\n{response}".encode("utf-8")) 
             elif str(msg).startswith("message read from"):
                 messages.message_read_from(conn, msg, self.user_logged)
             else:

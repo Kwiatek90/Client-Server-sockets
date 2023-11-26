@@ -46,14 +46,18 @@ class MessagesTests(unittest.TestCase):
         test_msg = f"message new SecondUser > {big_msg_open()}"
         self.assertEqual(message_new(test_msg, self.user_dict, "FirstUser", self.msg_path) , "Message exceeds 255 characters!")
         
-    def test_message_new_when_have_been_sent(self):
+    def test_message_new_when_have_been_sent_and_have_been_deleted(self):
         test_msg = "message new SecondUser > This is a message"
         self.assertEqual(message_new(test_msg, self.user_dict, "FirstUser", self.msg_path), "The message has been sent")
+        test_msg = "message delete 1"
+        self.assertEqual(message_delete(test_msg, "SecondUser", self.msg_path), "The message has been deleted")
         
     def test_message_delete_with_incorrect_command(self):
-        pass
+        test_msg = "message delete 1 delete"
+        self.assertEqual(message_delete(test_msg, "SecondUser", self.msg_path), "The wrong amount of data was entered or the format was incorrect")
         
-    
+    def test_message_read_from(self):
+        pass
         
     
     

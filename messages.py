@@ -29,29 +29,29 @@ def message_new(msg, user_dict, user_logged, msg_path):
         response = "The wrong amount of data was entered or the format was incorrect"
         return response
     
-def message_delete(conn, msg, user_logged):
+def message_delete(msg, user_logged, msg_path):
     try:
-        user_msg_json = load_message_user_json(user_logged)
+        user_msg_json = load_message_user_json(user_logged, msg_path)
         message_text, delete_text , messages_num = str(msg).split(" ")
         messages_num = int(messages_num)
         del user_msg_json[messages_num]
-        save_message_user_json(user_logged, user_msg_json)
-        conn.sendall(f"[SERVER] Message has been deleted".encode("utf-8"))  
+        save_message_user_json(user_logged, user_msg_json, msg_path)
+        response = "The message has been deleted"
+        return response
     except ValueError:
         response = "The wrong amount of data was entered or the format was incorrect"
-        conn.sendall(f"[SERVER] {response}".encode("utf-8"))  
+        return response
 
-def message_read(conn, user_logged):
-    user_msg_json = load_message_user_json(user_logged)
+def message_read(user_logged, msg_path):
+    user_msg_json = load_message_user_json(user_logged, msg_path)
     
     messages = []
     for message in user_msg_json:
         messages.append({"Message from:": message['Message from'], "Read": message["Read"]})
     
     messages_read_json = json.dumps(messages, indent=2)
-    conn.sendall(f"[SERVER] You have messages from:\n{messages_read_json}".encode("utf-8")) 
-      
-               
+    return messages_read_json
+                
 def message_read_from(conn, msg, user_logged):
     try:
         user_msg_json = load_message_user_json(user_logged)
