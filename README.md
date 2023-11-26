@@ -52,6 +52,9 @@ https://youtu.be/tgf30V91FGI
 
 * Improved error handling for user and messages commands
 
+### v0.2.5
+* Adding unit tests in modules related to users and sending messages
+
 ## Applied technologies and libraries
 
 * Environment
