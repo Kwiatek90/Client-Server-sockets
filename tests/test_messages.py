@@ -29,6 +29,12 @@ class MessagesTests(unittest.TestCase):
                                         
                                     }
         self.full_message_inbox = load_message_user_json("UserMsgTest_full", self.msg_path)
+        self.message_user = {
+                                "Message from": "FirstUser",
+                                "Message": "This is a message",
+                                "Read": False,
+                                "Time of receiving the message": "2023-11-26 10:55:50"
+                            }
         
     def test_message_new_with_incorrect_command(self):
         test_msg = "message new FirstUser admin > This is the message"
@@ -56,8 +62,7 @@ class MessagesTests(unittest.TestCase):
         test_msg = "message delete 1 delete"
         self.assertEqual(message_delete(test_msg, "SecondUser", self.msg_path), "The wrong amount of data was entered or the format was incorrect")
         
-    def test_message_read_from(self):
-        pass
+    
         
     
     

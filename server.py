@@ -77,7 +77,8 @@ class Server:
                 response = messages.message_read(self.user_logged, self.messages_path)
                 conn.sendall(f"[SERVER] You have messages from:\n{response}".encode("utf-8")) 
             elif str(msg).startswith("message read from"):
-                messages.message_read_from(conn, msg, self.user_logged)
+                response, messages_num = messages.message_read_from(msg, self.user_logged, self.messages_path)
+                conn.sendall(f"[SERVER] Information about the message from the list with number {messages_num}\n{response}".encode("utf-8"))
             else:
                 conn.sendall(f"[SERVER] You entered the wrong command or you don't have access to it".encode("utf-8"))
      

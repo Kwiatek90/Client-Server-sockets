@@ -52,9 +52,9 @@ def message_read(user_logged, msg_path):
     messages_read_json = json.dumps(messages, indent=2)
     return messages_read_json
                 
-def message_read_from(conn, msg, user_logged):
+def message_read_from(msg, user_logged, msg_path):
     try:
-        user_msg_json = load_message_user_json(user_logged)
+        user_msg_json = load_message_user_json(user_logged, msg_path)
         message_text, read_text ,from_text, messages_num = str(msg).split(" ")
         messages_num = int(messages_num)
         
@@ -62,11 +62,11 @@ def message_read_from(conn, msg, user_logged):
         user_msg = user_msg_json[messages_num]
         response = json.dumps(user_msg, indent=1)
         
-        save_message_user_json(user_logged, user_msg_json)
-        conn.sendall(f"[SERVER] Information about the message from the list with number {messages_num}\n{response}".encode("utf-8"))   
+        save_message_user_json(user_logged, user_msg_json, msg_path)
+        return response, messages_num   
     except ValueError:
         response = "The wrong amount of data was entered or the format was incorrect"
-        conn.sendall(f"[SERVER] {response}".encode("utf-8"))   
+        return response, messages_num
     
 def load_message_user_json(user, msg_path):
     try:
