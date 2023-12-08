@@ -23,6 +23,9 @@ def create_user(msg, user_dict, users_json_path):
         print("[FAIL] Wrong data")
         response = "The wrong amount of data was entered or the format was incorrect"
         return response
+    finally:
+        pass
+        #zamyka tworzenie query
     
 def delete_user(msg, user_dict, users_json_path):
     try:
@@ -86,7 +89,7 @@ def user_info(user_logged):
         respone = f"You are logged in as {user_logged}"
     return respone
 
-def save_users_json(users_dict, users_json_path):
+def save_users_json(users_dict, users_json_path):### save juz nie trzeba robic, tylko za kazdym razem po utworzenie usunieciu trzeba bedzie ładować dane na nowo
     with open(users_json_path, 'w') as file:
         json.dump(users_dict, file, indent=3)
         

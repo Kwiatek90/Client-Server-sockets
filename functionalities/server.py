@@ -3,6 +3,10 @@ import socket
 from datetime import datetime
 import users
 import messages
+from database import *
+
+#wrzucic msg, server operation i user do folder 
+#wruzcic database.ini i config do folderu
 class Server:
     def __init__(self, HOST, PORT, VERSION) -> None:
         self.HOST = HOST
@@ -16,6 +20,8 @@ class Server:
         self.users_json_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json'
         self.messages_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\messages'
         self.user_dict = users.load_users_json(self.users_json_path)
+        self.conn_db = DatabasePsql() ## ta funkcja musi byc zamkyna conn_db.close()
+        #klasa z serwerem i tu bedzie conn_db #1
         
     
     def start_server(self):
@@ -36,10 +42,10 @@ class Server:
         print(f"[NEW CONNECTION] {addr} connected.")
         conn.sendall(f"[SERVER] You are connected to the {self.HOST}".encode("utf-8"))
 
-        
         self.connected = True
         while self.connected:
             msg = conn.recv(1024).decode("utf-8")
+            #swtowrzyc plik msg_operation czy cos takiego gdzie są opcje, aby tu była mniejsza ilosc kodu
             if msg == 'uptime':
                 self.uptime(conn)
             elif msg == "info":
@@ -54,7 +60,7 @@ class Server:
             elif str(msg).startswith("user delete") and self.is_admin == True:
                 response = users.delete_user(msg, self.user_dict, self.users_json_path)
                 self.response_load_users(response, conn)
-            elif str(msg).startswith("users show") and self.is_admin == True:
+            elif str(msg).startswith("users show") and self.is_admin == True:# z wysyłaniem za pomocą jsona nie będzie problemu tworzy sie ładnie
                 users_list = users.users_show(self.user_dict)
                 msg_json = json.dumps(users_list, indent=2)
                 conn.sendall(f"[SERVER] Users on server\n{msg_json}".encode("utf-8"))  
@@ -108,7 +114,7 @@ class Server:
         print("[SENDING] Info about server")
         self.send_json(info_dict, conn)
     
-    def help_command(self, conn):
+    def help_command(self, conn):#pobieranie komend z pliku json
         commands_info = {
             "uptime": "server live time",
             "info": "returns the version number of the server, its creation date",
