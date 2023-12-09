@@ -5,8 +5,8 @@ import users
 import messages
 from database import *
 
-#wrzucic msg, server operation i user do folder 
-#wruzcic database.ini i config do folderu
+
+
 class Server:
     def __init__(self, HOST, PORT, VERSION) -> None:
         self.HOST = HOST
@@ -19,10 +19,9 @@ class Server:
         self.user_logged = None
         self.users_json_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json'
         self.messages_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\messages'
-        self.user_dict = users.load_users_json(self.users_json_path)
-        self.conn_db = DatabasePsql() ## ta funkcja musi byc zamkyna conn_db.close()
-        #klasa z serwerem i tu bedzie conn_db #1
-        
+        self.conn_db = DatabasePsql() 
+        self.user_dict = self.conn_db.load_users_from_database()
+       
     
     def start_server(self):
         print("[STARTING] Server is starting ...")

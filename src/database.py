@@ -15,15 +15,23 @@ class DatabasePsql:
             params = config.config_params()
             print(params)
             conn = psycopg2.connect(**params)
-            
             return conn
             
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             conn.close()
-        #finally:
-        #    if conn_db is not None:
-        #        conn_db.close()
-        #        print('Database connection closed.')
+        finally:#spradzic czy to sie wyoknuje
+            if self.conn_db is not None:
+                self.conn_db.close()
+                print('Database connection closed.')
+                
+    def load_users_from_database(self):
+        query = "SELECT name, password, is_admin FROM users;"
+        cur = self.conn_db.cursor()
+        cur.execute(query)
+        data =  cur.fetchone()
+        cur.close()
+        return data
         
+    
         
