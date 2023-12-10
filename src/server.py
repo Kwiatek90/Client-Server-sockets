@@ -8,21 +8,16 @@ from database import *
 
 
 class Server:
-    def __init__(self, HOST, PORT, VERSION) -> None:
-        self.HOST = HOST
-        self.PORT = PORT
+    def __init__(self, HOST, PORT, VERSION, database_config_path) -> None:
         self.VERSION = VERSION
-        self.ADDR = (self.HOST, self.PORT)
+        self.ADDR = (HOST, PORT)
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_start_time = datetime.now().replace(microsecond=0)
         self.is_admin = False
         self.user_logged = None
-        self.users_json_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\users.json'
-        self.messages_path = r'D:\Programowanie\EgzaminyZeroToJunior\DATABASE\CS_socket\messages'
-        self.conn_db = DatabasePsql() 
+        self.conn_db = DatabasePsql(database_config_path) 
         self.user_dict = self.conn_db.load_users_from_database()
        
-    
     def start_server(self):
         print("[STARTING] Server is starting ...")
         self.server.bind(self.ADDR)

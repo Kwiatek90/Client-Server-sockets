@@ -1,6 +1,6 @@
 import json
 
-def create_user(msg, user_dict, users_json_path):
+def create_user(msg, conn_db):
     try:
         user_str, create_str,  name, password, admin = str(msg).split(" ")
         
@@ -12,12 +12,14 @@ def create_user(msg, user_dict, users_json_path):
             response = "Incorrect value for admin rights"
             return response
         
-        if name in user_dict:
+        query =  f"select exists(select name from users_test where name='{name}')"
+        user_exists = conn_db.load_data_from_database(query)[0][0]
+        
+        if user_exists:
             response = "The user exists"
-        else:   
-            user_dict[name] = {'password': password, 'admin': admin}
-            save_users_json(user_dict, users_json_path)
-            response = "The user has been added!"
+        else: 
+            query_add_user = f"INSERT INTO users_tests (name, password, is_admin) VALUES ('{name}', '{password}', '{admin}');"
+            response = conn_db.write_data_to_database(query_add_user)
         return response
     except ValueError:
         print("[FAIL] Wrong data")
@@ -27,15 +29,20 @@ def create_user(msg, user_dict, users_json_path):
         pass
         #zamyka tworzenie query
     
-def delete_user(msg, user_dict, users_json_path):
+def delete_user(msg, conn_db):
     try:
         user, delete,  name = str(msg) .split(" ")
         
-        if name in user_dict:
-            user_dict.pop(name)
-            save_users_json(user_dict, users_json_path)
-            response = "The user has been deleted"
+        query =  f"select exists(select name from users_test where name='{name}')"
+        user_exists = conn_db.load_data_from_database(query)[0][0]
+        
+        if user_exists:
+            query_delete_user = f"DELETE FROM users_test WHERE name = '{name}';"
+            response = conn_db.write_data_to_database(query_delete_user)
+            if response:
+                response = "The user has been deleted"
             print(f"[DELETE] The {name} has been deleted")
+            return response
         else:
             response = "User does not exist!"
             
@@ -89,9 +96,17 @@ def user_info(user_logged):
         respone = f"You are logged in as {user_logged}"
     return respone
 
-def save_users_json(users_dict, users_json_path):### save juz nie trzeba robic, tylko za kazdym razem po utworzenie usunieciu trzeba bedzie ładować dane na nowo
-    with open(users_json_path, 'w') as file:
-        json.dump(users_dict, file, indent=3)
+def users_to_dict(users_from_db):
+    user_list= []
+    
+    for row in users_from_db:
+        user_dict = {}
+        user_dict["name"] = row[0]
+        user_dict["password"] = row[1]
+        user_dict["is_admin"] = row[2]
+        user_list.append(user_dict)
+        
+    return user_list
         
 def load_users_json(users_json_path):
     with open(users_json_path, 'r') as file:

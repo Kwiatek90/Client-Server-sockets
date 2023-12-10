@@ -1,9 +1,9 @@
 
 from configparser import ConfigParser
 
-path = "config\database.ini"
 
-def config_params(filename=path, section="postgresql"):
+
+def config_params(filename, section="postgresql"):
     # create a parser
     parser = ConfigParser()
     parser.read(filename)
