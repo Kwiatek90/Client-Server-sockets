@@ -18,16 +18,14 @@ def create_user(msg, conn_db):
         if user_exists:
             response = "The user exists"
         else: 
-            query_add_user = f"INSERT INTO users_tests (name, password, is_admin) VALUES ('{name}', '{password}', '{admin}');"
+            query_add_user = f"INSERT INTO users_test (name, password, is_admin) VALUES ('{name}', '{password}', {admin});"
             response = conn_db.write_data_to_database(query_add_user)
+            if response == True: response = "The user has been added!"
         return response
     except ValueError:
         print("[FAIL] Wrong data")
         response = "The wrong amount of data was entered or the format was incorrect"
         return response
-    finally:
-        pass
-        #zamyka tworzenie query
     
 def delete_user(msg, conn_db):
     try:
@@ -51,20 +49,30 @@ def delete_user(msg, conn_db):
         print("[FAIL] Wrong data")
         response = "The wrong amount of data was entered or the format was incorrect"
         return response
-    
-def users_show(user_dict):
-    users = []
-    for user in user_dict:
-        users.append(user)
+
+#to do zrobienia przenisc funkcje z database do users lub funkjca users to dict tutaj    
+def users_show(conn_db):
+    query = "select name, is_admin from users_test;"
+    users_list_from_db = conn_db.load_data_from_database(query)
+    users = users_to_dict(users_list_from_db)
     return users
         
-def user_log_in(msg, user_dict, user_logged , is_admin):
+def user_log_in(msg, conn_db, user_logged , is_admin):
     try:
         if not user_logged:
             user, log, inn, name, password = str(msg).split(" ")
             
-            if name in user_dict and user_dict[name]['password'] == password:
-                response, user_logged, is_admin = "The user has been logged in!", name, user_dict[name]['admin']
+            query =  f"select exists(select name from users_test where name = '{name}');"
+            user_exists = conn_db.load_data_from_database(query)[0][0]
+            
+            if user_exists: 
+                query_password = f"select password, is_admin from users_test where name = '{name}';"
+                user_password_from_db = conn_db.load_data_from_database(query_password)[0][0]
+                user_is_admin_from_db = conn_db.load_data_from_database(query_password)[0][1]
+                if user_password_from_db == password:
+                    response, user_logged, is_admin = "The user has been logged in!", name, user_is_admin_from_db
+                else:
+                    response = "The password is incorrect"
             else:
                 response = "The login details are incorrect"
                 print("[FAIL] The client provided wrong data")
@@ -102,16 +110,11 @@ def users_to_dict(users_from_db):
     for row in users_from_db:
         user_dict = {}
         user_dict["name"] = row[0]
-        user_dict["password"] = row[1]
-        user_dict["is_admin"] = row[2]
+        user_dict["is_admin"] = row[1]
         user_list.append(user_dict)
         
     return user_list
         
-def load_users_json(users_json_path):
-    with open(users_json_path, 'r') as file:
-        users_json = json.load(file)
-    return users_json
 
     
   

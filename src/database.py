@@ -27,9 +27,8 @@ class DatabasePsql:
         cur.execute(query)
         data =  cur.fetchall()
         cur.close()
-        self.conn_db.close()
         return data
-    
+        
     def write_data_to_database(self, query):
         try:  
             cur = self.conn_db.cursor()

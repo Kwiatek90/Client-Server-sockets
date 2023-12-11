@@ -16,7 +16,6 @@ class Server:
         self.is_admin = False
         self.user_logged = None
         self.conn_db = DatabasePsql(database_config_path) 
-        self.user_dict = self.conn_db.load_users_from_database()
        
     def start_server(self):
         print("[STARTING] Server is starting ...")
