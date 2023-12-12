@@ -10,7 +10,7 @@ class ServerTests(unittest.TestCase):
     def setUp(self):
         self.db = database.DatabasePsql("tests\database_test.ini")
         
-        
+    #zrobic test bazy danych    
     def test_load_data_from_database(self):
         data = self.db.load_data_from_database("SELECT name, password, is_admin FROM users_test;")
         self.assertEqual(data, self.users_list_from_db)

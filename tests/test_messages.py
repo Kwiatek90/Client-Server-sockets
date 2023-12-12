@@ -62,6 +62,7 @@ class MessagesTests(unittest.TestCase):
         test_msg = "message delete 1 delete"
         self.assertEqual(message_delete(test_msg, "SecondUser", self.msg_path), "The wrong amount of data was entered or the format was incorrect")
         
+        
     
 if __name__ == "__main__":
     unittest.main()

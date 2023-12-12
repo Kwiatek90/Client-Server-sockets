@@ -1,18 +1,21 @@
 import json
 from datetime import datetime
+from users import check_if_the_user_exists
 
-def message_new(msg, user_dict, user_logged, msg_path):
+def message_new(msg, conn_db, user_logged):
     try:
         command, message = str(msg).split(">")
         message_text, new_text, receiver = str(command.rstrip()).split(" ")
         message = message.lstrip()
-        if receiver in user_dict:
-            user_msg_json = load_message_user_json(receiver, msg_path)
-            unread = check_unread_msg(user_msg_json)
-            send_time = str(datetime.now().replace(microsecond=0))
+        user_exists = check_if_the_user_exists(receiver, conn_db)
+        
+        if user_exists:
+            unread = check_unread_msg(receiver, conn_db)
        
             if unread < 5:
                 if len(message) <= 255:
+                    #dodowanie wiadomosci
+                    #BŁĄD:  wartość zbyt długa dla typu znakowego zmiennego (255) to podaje baza jak wiadomosc jest zbyt długa
                     user_msg_json.append({"Message from": user_logged, "Message": message, "Read": False, "Time of receiving the message": send_time})
                     save_message_user_json(receiver, user_msg_json, msg_path)
                     response = "The message has been sent"
@@ -28,6 +31,12 @@ def message_new(msg, user_dict, user_logged, msg_path):
     except ValueError:
         response = "The wrong amount of data was entered or the format was incorrect"
         return response
+    
+def check_unread_msg(receiver, conn_db):
+    query = f"select count(unread) from messages where name = {receiver};"
+    unread = int(conn_db.load_data_from_database(query)[0][0])
+    return unread
+            
     
 def message_delete(msg, user_logged, msg_path):
     try:
@@ -84,11 +93,4 @@ def load_message_user_json(user, msg_path):
 def save_message_user_json(user, user_msg_json, msg_path):
     with open(f'{msg_path}\{user}.json', 'w') as file:
         json.dump(user_msg_json, file, indent=2)
-        
-def check_unread_msg(user_msg_json):
-    unread = 0
-    for msg in user_msg_json:
-        msg["Read"] == False
-        unread += 1
-    return unread
         
