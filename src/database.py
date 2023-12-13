@@ -36,9 +36,9 @@ class DatabasePsql:
             self.conn_db.commit()
             return True
         except (Exception, psycopg2.Error) as error:
-            response = ("Error while connecting to PostgreSQL", error)
+            print("Error while connecting to PostgreSQL", error)
             self.conn_db.rollback()
-            return response
+            return False
             
 
     
