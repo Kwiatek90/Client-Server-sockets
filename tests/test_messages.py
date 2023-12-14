@@ -31,17 +31,22 @@ class MessagesTests(unittest.TestCase):
     def test_message_new_when_the_message_exceeds_255_characters(self):
         test_msg = f"message new admin > {big_msg_open()}"
         self.assertEqual(messages.message_new(test_msg, self.db, "user") , "Message exceeds 255 characters!")
-        
+    
+    #akutalny test    
     def test_message_new_when_have_been_sent_and_have_been_deleted(self):
-        test_msg = "message new SecondUser > This is a message"
-        self.assertEqual(messages.message_new(test_msg, self.user_dict, "FirstUser", self.msg_path), "The message has been sent")
-        test_msg = "message delete 1"
-        self.assertEqual(messages.message_delete(test_msg, "SecondUser", self.msg_path), "The message has been deleted")
-        
+        test_msg = "message new admin > This is a message which will be deleted"
+        self.assertEqual(messages.message_new(test_msg, self.db, "user"), "The message has been sent")
+        query_to_find_id_msg = "select msg_id from messages where msg_from = 'user' and msg_for = 'admin' and msg = 'This is a message which will be deleted';"
+        msg_id = self.db.load_data_from_database(query_to_find_id_msg)[0][0]
+        test_msg = f"message delete {msg_id}"
+        self.assertEqual(messages.message_delete(test_msg, self.db, 'admin'), "The message has been deleted")
+    
+    #aktaulny test  
     def test_messages_delete_when_the_number_of_messages_is_incorrect(self):
         test_msg = f"messages delete 99"
-        self.assertEqual(messages.message_delete(test_msg, self.db, 'admin'), False)
-        
+        self.assertEqual(messages.message_delete(test_msg, self.db, 'admin'), "The message does not exist")
+     
+    #aktualny test    
     def test_message_delete_with_incorrect_command(self):
         test_msg = "message delete 1 delete"
         self.assertEqual(messages.message_delete(test_msg, self.db, ""), "The wrong amount of data was entered or the format was incorrect")

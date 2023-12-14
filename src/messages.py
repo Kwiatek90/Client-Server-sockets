@@ -42,19 +42,28 @@ def check_unread_msg(receiver, conn_db):
 def message_delete(msg, conn_db, user_logged):
     try:
         message_text, delete_text , messages_num = str(msg).split(" ")
-        query_msg_delete = f"DELETE FROM messages WHERE msg_for = {user_logged} and msg_id = {messages_num}"
-        response = conn_db.write_data_to_database(query_msg_delete)
-        
-        #to zwraca za kazdym razem wartosc true, nawet kiedy podana liczba jest za duza, uzyc zapytania gdzie wartosc zwracan jest 0 lub 1 i wtedy zrobic false true
-        print(response) 
-       
-        response = "The message has been deleted"
+        messages_exists = check_if_the_messages_exists(conn_db, user_logged, messages_num)
+        if messages_exists:
+            query_msg_delete = f"DELETE FROM messages WHERE msg_for = '{user_logged}' and msg_id = {messages_num};"
+            response = conn_db.write_data_to_database(query_msg_delete)
+            if response == True: response = "The message has been deleted"
+            else: response = "Error in database query"
+        else:
+            response = "The message does not exist"    
         return response
     except ValueError:
         response = "The wrong amount of data was entered or the format was incorrect"
         return response
 
-def message_read(user_logged, msg_path):
+def check_if_the_messages_exists(conn_db, user_logged, messages_num):
+    query = f"select exists(SELECT * FROM messages WHERE msg_for = '{user_logged}' and msg_id = {messages_num});"
+    response = conn_db.load_data_from_database(query)[0][0]
+    return response
+    
+    
+    
+# teraz to !@#@!#@!    
+def message_read(user_logged, conn_db):
     user_msg_json = load_message_user_json(user_logged, msg_path)
     
     messages = []
