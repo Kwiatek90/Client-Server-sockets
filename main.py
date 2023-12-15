@@ -1,7 +1,5 @@
-from server import Server
+from src import server
 
-server = Server("127.0.0.1", 65432, "v0.2.0", "config\database.ini")
+server = server.Server("127.0.0.1", 65432, "v0.3.0", "config\database.ini")
 server.start_server()
-
-
 

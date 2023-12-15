@@ -1,0 +1,16 @@
+{
+    "uptime": "server live time",
+    "info": "returns the version number of the server, its creation date",
+    "help": "returns a list of available commands with a short description",
+    "stop": "stops the server and client at the same time",
+    "user log in [NAME] [PASSWORD]": "Log in to the server by entering Name and Password",
+    "user info": "Shows who is currently logged in",
+    "user log out": "Logs the user out",
+    "user create [NAME] [PASSWORD] [IS_ADMIN(Yes/No)]": "Creating a user",
+    "user delete [NAME]": "Deleting a user",
+    "users show": "Shows all server users",
+    "message new [NAME] > [MESSAGE]": "Will send a message to the user with a maximum capacity of 255 characters",
+    "message delete [MESSAGE NUMBER STARTING FROM 0]": "Deleting a message",
+    "messages read": "Shows all messages, who they are from and whether they have been read",
+    "message read from [MESSAGE NUMBER STARTING FROM 0]": "Show message from the sender"
+}

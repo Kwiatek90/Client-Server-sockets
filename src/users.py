@@ -66,7 +66,7 @@ def users_to_dict(users_from_db):
         
     return user_list
         
-def user_log_in(msg, conn_db, user_logged , is_admin):
+def user_log_in(msg, conn_db, user_logged, is_admin):
     try:
         if not user_logged:
             user, log, inn, name, password = str(msg).split(" ")

@@ -10,12 +10,13 @@
 
 ## Introduction
 
-This Python script demonstrates a simple client-server communication setup using sockets. The server provides essential functionalities, including server uptime, server information retrieval, a list of available commands, and user management. Users can have either admin or user rights, and the server allows sending and managing messages between clients. All data is stored in json files
+This Python script demonstrates a simple client-server communication setup using sockets. The server provides essential functionalities, including server uptime, server information retrieval, a list of available commands, and user management. Users can have either admin or user rights, and the server allows sending and managing messages between clients using JSON. All data is stored in PostgreSQL.
 
 ## Setup
 
 * To start the server and client in two separate terminal windows, follow these steps:
 
+    * Create the database.ini file in config folder and configure your database
     * Open a terminal in the folder where the main.py and client.py files are located.
     * In the first terminal window, start the server by running the following command:
 
@@ -31,7 +32,7 @@ This Python script demonstrates a simple client-server communication setup using
 
 ## Video
 
-https://youtu.be/tgf30V91FGI
+https://youtu.be/By7UohRraFU
 
 ## Version History
 
@@ -55,6 +56,9 @@ https://youtu.be/tgf30V91FGI
 ### v0.2.5
 * Adding unit tests in modules related to users and sending messages
 
+## v0.3.0
+* Changing the way of storing data from JSON to PostgreSQL
+
 ## Applied technologies and libraries
 
 * Environment
@@ -66,6 +70,7 @@ https://youtu.be/tgf30V91FGI
     * json
     * datetime
     * unittest
+    * psycopg2
 
 ## License
 

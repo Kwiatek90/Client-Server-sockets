@@ -14,8 +14,6 @@ def message_new(msg, conn_db, user_logged):
             unread = check_unread_msg(receiver, conn_db)
        
             if unread < 5:
-                #dodowanie wiadomosci
-                #BŁĄD:  wartość zbyt długa dla typu znakowego zmiennego (255) to podaje baza jak wiadomosc jest zbyt długa
                 query_add_message = f"INSERT INTO messages (msg_from, msg_for, msg) VALUES ('{user_logged}','{receiver}','{message}')"
                 response = conn_db.write_data_to_database(query_add_message)
                 if response == True: 
@@ -89,7 +87,7 @@ def message_read_from(msg, conn_db, user_logged):
             messages = []
             for message in msg_list:
                 messages.append({"Message_number:": message[0], "Message_from": message[1], "Read": message[2], "Time_message": f"{message[3]}", "Message_text": message[4]})
-        
+
             response = json.dumps(messages, indent=1)
         else:
             response = "The messages does not exist"
@@ -98,21 +96,3 @@ def message_read_from(msg, conn_db, user_logged):
     except ValueError:
         response = "The wrong amount of data was entered or the format was incorrect"
         return response, messages_num
-    
-def load_message_user_json(user, msg_path):
-    try:
-        with open(f'{msg_path}\{user}.json', 'r') as file:
-            users_json = json.load(file)
-            return users_json   
-        
-    except FileNotFoundError:
-        print("[FILES] File not exist, creating one")
-        user_msg_json = []
-        save_message_user_json(user, user_msg_json, msg_path)
-        users_json = load_message_user_json(user, msg_path)
-        return users_json
-    
-def save_message_user_json(user, user_msg_json, msg_path):
-    with open(f'{msg_path}\{user}.json', 'w') as file:
-        json.dump(user_msg_json, file, indent=2)
-        

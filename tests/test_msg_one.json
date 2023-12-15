@@ -1,1 +1,9 @@
-[{'Message_number:': 12, 'Message_from': 'user', 'Read': True, 'Time_message': '2023-12-15 08:33:28.327471', 'Message_text': 'Wiadomosc do odczytu 1'}]
+[
+    {
+        "Message_number:": 12,
+        "Message_from": "user",
+        "Read": true,
+        "Time_message": "2023-12-15 08:33:28.327471",
+        "Message_text": "Wiadomosc do odczytu 1"
+    }
+]
