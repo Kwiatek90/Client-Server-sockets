@@ -10,7 +10,7 @@
 
 ## Introduction
 
-This Python script demonstrates a simple client-server communication setup using sockets. The server provides essential functionalities, including server uptime, server information retrieval, a list of available commands, and user management. Users can have either admin or user rights, and the server allows sending and managing messages between clients using JSON. All data is stored in PostgreSQL.
+This Python script demonstrates a client-server communication setup using sockets. The server provides essential functionalities, including server uptime, server information retrieval, a list of available commands, and user management. Users can have either admin or user rights, and the server allows sending and managing messages between clients using JSON. All data is stored in PostgreSQL.
 
 ## Setup
 
