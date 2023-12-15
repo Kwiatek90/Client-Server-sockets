@@ -1,6 +1,7 @@
 import unittest
 import sys
 from pathlib import Path
+import json
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from src import messages
@@ -50,6 +51,24 @@ class MessagesTests(unittest.TestCase):
     def test_message_delete_with_incorrect_command(self):
         test_msg = "message delete 1 delete"
         self.assertEqual(messages.message_delete(test_msg, self.db, ""), "The wrong amount of data was entered or the format was incorrect")
+        
+    #aktualny test    
+    def test_messages_read_all_for_user(self):
+        with open(r'tests\test_msg_list.json', 'r') as file:
+            users_json = json.load(file)
+            users_list_json = json.dumps(users_json, indent=2)
+            self.assertEqual(messages.message_read("admin", self.db), users_list_json)
+            
+    def test_messages_read_from_one_messages(self):
+        testMsg = "messages read from 12"
+        ##nie odczytuje wiadomosci zrobic nowy plikz data
+        with open(r'tests\test_msg_list.json', 'r') as file:
+            users_json = json.load(file)
+            users_list_json = json.dumps([users_json[0]], indent=1)
+            self.assertEqual(messages.message_read_from(testMsg, self.db, "admin"), users_list_json)
+            query_rollback = f"UPDATE messages SET unread = false WHERE msg_for = 'admin' and msg_id = 12;"
+            database.write_data_to_database(query_rollback)
+        
         
         
     

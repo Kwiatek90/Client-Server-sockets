@@ -60,30 +60,40 @@ def check_if_the_messages_exists(conn_db, user_logged, messages_num):
     response = conn_db.load_data_from_database(query)[0][0]
     return response
     
-    
-    
-# teraz to !@#@!#@!    
 def message_read(user_logged, conn_db):
-    user_msg_json = load_message_user_json(user_logged, msg_path)
-    
+    query_msg = f"SELECT msg_id, msg_from, unread FROM messages WHERE msg_for = '{user_logged}';"
+    msg_list_from_db = conn_db.load_data_from_database(query_msg)
+
     messages = []
-    for message in user_msg_json:
-        messages.append({"Message from:": message['Message from'], "Read": message["Read"]})
+    for message in msg_list_from_db:
+        messages.append({"Message_number:": message[0], "Message_from": message[1], "Read": message[2]})
     
     messages_read_json = json.dumps(messages, indent=2)
     return messages_read_json
                 
-def message_read_from(msg, user_logged, msg_path):
+def message_read_from(msg, conn_db, user_logged):
     try:
-        user_msg_json = load_message_user_json(user_logged, msg_path)
         message_text, read_text ,from_text, messages_num = str(msg).split(" ")
         messages_num = int(messages_num)
+        message_exists = check_if_the_messages_exists(conn_db, user_logged, messages_num)
         
-        user_msg_json[messages_num]["Read"] = True
-        user_msg = user_msg_json[messages_num]
-        response = json.dumps(user_msg, indent=1)
+        if message_exists:
+            query_msg_read = f"UPDATE messages SET unread = true WHERE msg_for = '{user_logged}' and msg_id = {messages_num};"
+            query_msg = f"SELECT msg_id, msg_from, unread, time_msg_recv, msg FROM messages WHERE msg_for = '{user_logged}' and msg_id = {messages_num};"
+            
+            response_unread = conn_db.write_data_to_database(query_msg_read)
+            if response_unread == True: print("The messages change unread to True") 
+            else: print("Something goes wrong and messages not change to True") 
+            msg_list = conn_db.load_data_from_database(query_msg)
+            
+            messages = []
+            for message in msg_list:
+                messages.append({"Message_number:": message[0], "Message_from": message[1], "Read": message[2], "Time_message": f"{message[3]}", "Message_text": message[4]})
         
-        save_message_user_json(user_logged, user_msg_json, msg_path)
+            response = json.dumps(messages, indent=1)
+        else:
+            response = "The messages does not exist"
+        
         return response, messages_num   
     except ValueError:
         response = "The wrong amount of data was entered or the format was incorrect"
