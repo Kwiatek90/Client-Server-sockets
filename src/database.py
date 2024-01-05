@@ -8,11 +8,11 @@ class DatabasePsql:
     def __init__(self, database_config_path):
         self.database_config_path = database_config_path
         self.conn_db = self.connect_db()
+        #tutaj tworzymy connection pool w ktorym jest np 10 threading i bedziemy z niego pobierac pojedyncze threding zaleznie od wielkosci zpaytania
         
     
     def connect_db(self):
         """Connect to the PostgreSQL database server"""
-
         try:
             params = config.config_params(self.database_config_path)
             conn = psycopg2.connect(**params)
