@@ -9,19 +9,15 @@ from src import database
 
 class DatabaseTests(unittest.TestCase):
     def setUp(self):
-        pass
-        #self.db = database.DatabasePsql("tests\database_test.ini")
+        self.db = database.DatabasePsql("tests\database_test.ini")
         
-    def test_crash_with_500_query_to_database(self):
+    def test_crash_with_5000_query_to_database(self):
         start = time.perf_counter()
         
-        querys = ["SELECT * FROM users;" for _ in range(500)]
+        querys = ["SELECT * FROM users;" for _ in range(5000)]
         
         for query in querys:
-            db = database.DatabasePsql("tests\database_test.ini")
-            response = db.load_data_from_database(query)
-            print(response)
-       
-       #26 sekund wychodzi
+            response = self.db.load_data_from_database(query)
+        
         finish = time.perf_counter()
         print(f"Finished in {round(finish-start,2)} second(s)")

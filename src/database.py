@@ -3,13 +3,14 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 from config import config
+from src.connectionDb_pool import ConnectionPool
 
 class DatabasePsql:
     def __init__(self, database_config_path):
         self.database_config_path = database_config_path
         self.conn_db = self.connect_db()
         #tutaj tworzymy connection pool w ktorym jest np 10 threading i bedziemy z niego pobierac pojedyncze threding zaleznie od wielkosci zpaytania
-        
+        self.connPool = ConnectionPool("tests\database_test.ini")
     
     def connect_db(self):
         """Connect to the PostgreSQL database server"""
@@ -23,15 +24,18 @@ class DatabasePsql:
             conn.close()
                  
     def load_data_from_database(self, query):
-        cur = self.conn_db.cursor()
-        cur.execute(query)
-        data =  cur.fetchall()
-        cur.close()
-        return data
+        conn_db = self.connPool.get_conn_db()
+        with conn_db.cursor() as cur:
+            cur.execute(query)
+            data =  cur.fetchall()
+            self.connPool.put_conn_db(conn_db)
+            cur.close()
+            return data
         
     def write_data_to_database(self, query):
         try:  
-            cur = self.conn_db.cursor()
+            conn_db = self.connPool.get_conn_db()
+            cur = conn_db.cursor()
             cur.execute(query)
             self.conn_db.commit()
             return True

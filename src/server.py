@@ -17,7 +17,7 @@ class Server:
         self.is_admin = False
         self.user_logged = None
         self.conn_db = database.DatabasePsql(database_config_path) #generalenie to jest dobrze poniewaz tworze raz zapytanie i potem tylko go uzywam po razie 
-       
+       #tutaj  bedzie to samo tworzone tylko ze z connection pooll
     def start_server(self):
         print("[STARTING] Server is starting ...")
         self.server.bind(self.ADDR)
