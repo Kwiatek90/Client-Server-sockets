@@ -8,8 +8,7 @@ from src.connectionDb_pool import ConnectionPool
 class DatabasePsql:
     def __init__(self, database_config_path):
         self.database_config_path = database_config_path
-        self.conn_db = self.connect_db()
-        #tutaj tworzymy connection pool w ktorym jest np 10 threading i bedziemy z niego pobierac pojedyncze threding zaleznie od wielkosci zpaytania
+        self.conn_db = self.connect_db() #old connection
         self.connPool = ConnectionPool("tests\database_test.ini")
     
     def connect_db(self):
@@ -24,11 +23,12 @@ class DatabasePsql:
             conn.close()
                  
     def load_data_from_database(self, query):
-        conn_db = self.connPool.get_conn_db()
+        conn_db_obj = self.connPool.get_conn()
+        conn_db = conn_db_obj["Connection"]
         with conn_db.cursor() as cur:
             cur.execute(query)
             data =  cur.fetchall()
-            self.connPool.put_conn_db(conn_db)
+            self.connPool.release_conn(conn_db_obj)
             cur.close()
             return data
         
