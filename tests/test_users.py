@@ -80,7 +80,7 @@ class UsersTests(unittest.TestCase):
         self.assertEqual(users.user_info(None), "You need to log in!")
    
     def test_user_from_db_list_to_dict(self):
-        user_list_out = [{'name': 'admin', 'is_admin': True}, {'name': 'user', 'is_admin': False}]
+        user_list_out = [{'name': 'admin', 'is_admin': True}, {'name': 'user', 'is_admin': False}, {'is_admin': True, 'name': 'john_doe'}, {'is_admin': False, 'name': 'alice_smith'}]
         data = users.users_show(self.db)
         self.assertEqual(data, user_list_out)
         

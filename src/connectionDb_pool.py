@@ -7,27 +7,22 @@ from config import config
 import threading
 import queue
 import time  
-import random
 class ConnectionPool():
     def __init__(self, database_config_path):
         self.database_config_path = database_config_path
         self.min_conn = 10
         self.max_conn = 100
         
-        #self.active_conn = 0 #aktywne połączenia
-        self.queue = queue.Queue(self.max_conn) #zalokowane połączenia
+        self.queue = queue.Queue(self.max_conn)
         
-        self.lock = threading.Lock() #watek zablokowany
-        self.open_threads_connections() #startowe połączeni
+        self.lock = threading.Lock()
+        self.open_threads_connections()
         
         self.cleanup_thread = threading.Thread(target=self.cleanup_connections, daemon=True)
         self.cleanup_thread.start()
-        
-        self.status_thread = threading.Thread(target=self.checking_status, daemon=True)
-        self.status_thread.start()
     
     def open_threads_connections(self):
-        '''Na start tworzymy 10 zalokowanych połączeń jako wartość minimalna'''
+        '''At the beginning we create a 10 locked connections in queue'''
         with self.lock:
             for _ in range(self.min_conn):
                 self.queue.put(self.connect_db())
@@ -39,51 +34,45 @@ class ConnectionPool():
         return {"Connection": conn, "created_at": time.time()}
             
     def get_conn(self):
-        '''Pobiera połączenie z queue i uzywa je do zapytania, jezli kolejka jest pusta tworzy kolejne'''
+        '''Take the connection from queue, if queue is empty, create one. When the connection raise an exception, function create antoher '''
+        conn_db_obj = None
+        
+        
+        #teraz jest oki, trylko ze jak przychodzi queue do 0 to jest błąd
         with self.lock:
             try:
-                conn_db_obj = self.queue.get()
-            except self.queue.empty():
-                if self.queue.qsize() < self.max_conn:
+                if not self.queue.empty():
+                    if self.queue.qsize() < self.max_conn:
+                        conn_db_obj = self.queue.get()
+                    else:
+                        print("Connection limit reached 100!") 
+                else:###tutjta trzeba sprawdzic te odkładanie połączeń
                     conn_db_obj = self.connect_db()
-                else:
-                        raise ValueError("Connection limit reached 100!") 
-            return conn_db_obj
+               
+            except Exception as e:
+                print(f"Error during work: {e}")
+                if conn_db_obj:
+                    conn_db_obj["Connection"].close()
+                conn_db_obj = self.connect_db()
+            finally:    
+                return conn_db_obj
         
-    def release_conn(self, conn_db):
-        '''Odklada do queue uzyte połączenie'''
+    def release_conn(self, conn_db_obj):
+        '''Release connection to the queue'''
         with self.lock:
-            self.queue.put(conn_db) 
+            self.queue.put(conn_db_obj) 
+            print(f"Queue size {self.queue.qsize()}")
               
     def cleanup_connections(self):
+        '''Every 60 seconds function check connections'''
         while True:
             time.sleep(60)
             while not self.queue.empty():
-                conn_db_obj = self.queue.get()
-                if time.time() - conn_db_obj["created_at"] < 60:  # Keep connections active for the last minute
-                    self.queue.put(conn_db_obj)
-                else:
-                    conn_db_obj["Connection"].close()
+                print(self.queue.qsize())
+                if self.queue.qsize() > self.min_conn:
+                    conn_db_obj = self.queue.get()
+                    if time.time() - conn_db_obj["created_at"] < 60:
+                        self.queue.put(conn_db_obj)
+                    else:
+                        conn_db_obj["Connection"].close()
               
-    def checking_status(self):
-        while True:
-            time.sleep(5)
-            return self.queue.qsize()
-               
-    #do wyrzucenia                
-    def check_queue_pool(self):
-        "Funkcja która zamyka nie potrzebne active conn"
-        
-        with self.lock:
-            while True:
-                if self.active_conn > self.min_conn:
-                    conn_db = self.queue.get()
-                    conn_db.close()
-                    #self.active_conn -= 1
-                    
-                elif self.active_conn < self.min_conn:
-                    self.queue.put(self.connect_db())
-                    #self.active_conn += 1
-                else:
-                    return False
-            
