@@ -36,7 +36,7 @@ class ConnectionPool():
             return conn
         except Exception as e:
             print(f"Error connecting to PostgreSQL: {e}")
-            raise
+            raise Exception
         
     def get_conn(self):
         '''Take the connection from queue, if queue is empty, create one'''
