@@ -1,6 +1,6 @@
 import json
 
-def create_user(msg, conn_db):########################te conn_db bedzie trzeba wruzic beposrednio w funkcje z connection pool zeby sobier pobierala otwarte polaczenia
+def create_user(msg, conn_db):
     try:
         user_str, create_str,  name, password, admin = str(msg).split(" ")
         

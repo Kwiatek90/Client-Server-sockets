@@ -10,7 +10,7 @@
 
 ## Introduction
 
-This Python script demonstrates a client-server communication setup using sockets. The server provides essential functionalities, including server uptime, server information retrieval, a list of available commands, and user management. Users can have either admin or user rights, and the server allows sending and managing messages between clients using JSON. All data is stored in PostgreSQL and connection to the database is multi-thread. 
+This Python script demonstrates a client-server communication setup using sockets. The server provides essential functionalities, including server uptime, server information retrieval, a list of available commands, and user management. Users can have either admin or user rights, and the server allows sending and managing messages between clients using JSON. All data is stored in PostgreSQL.
 
 ## Setup
 
@@ -60,7 +60,7 @@ https://youtu.be/By7UohRraFU
 * Changing the way of storing data from JSON to PostgreSQL
 
 ## v0.3.5
-* Connections to the database are multi-threaded
+* 
 
 ## Applied technologies and libraries
 
@@ -74,8 +74,6 @@ https://youtu.be/By7UohRraFU
     * datetime
     * unittest
     * psycopg2
-    * threading
-    * queue
 
 ## License
 
